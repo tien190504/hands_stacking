@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JARVIS - Immersive AR Experience with 3D Earth and Gesture Control">
+    <title>JARVIS AR Interface</title>
+
+    <!-- Import Map for ES Modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <!-- MediaPipe -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js"
+        crossorigin="anonymous"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-ring"></div>
+            <h1 class="loading-title">J.A.R.V.I.S</h1>
+            <p class="loading-text">Initializing Systems...</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AR Container -->
+    <div id="ar-container">
+        <!-- Webcam Video (hidden, used as texture source) -->
+        <video id="webcam" autoplay playsinline></video>
+
+        <!-- Three.js Canvas -->
+        <canvas id="three-canvas"></canvas>
+
+        <!-- HUD Overlay -->
+        <div id="hud-overlay">
+            <!-- Top Left Status -->
+            <div class="hud-corner top-left">
+                <div class="hud-panel">
+                    <div class="panel-header">SYSTEM STATUS</div>
+                    <div class="status-item">
+                        <span class="status-label">NEURAL LINK</span>
+                        <span class="status-value online">ACTIVE</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">FACE TRACKING</span>
+                        <span class="status-value" id="face-status">SCANNING</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">HAND TRACKING</span>
+                        <span class="status-value" id="hand-status">SCANNING</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Right Data -->
+            <div class="hud-corner top-right">
+                <div class="hud-panel">
+                    <div class="panel-header">ANALYTICS</div>
+                    <div class="waveform-container">
+                        <canvas id="waveform-canvas" width="200" height="60"></canvas>
+                    </div>
+                    <div class="data-scroll" id="data-scroll">
+                        <div class="scroll-content">
+                            QUANTUM CORE: 98.7% EFFICIENCY<br>
+                            ARC REACTOR: NOMINAL<br>
+                            NEURAL PROCESSING: 847 TFLOPS<br>
+                            HOLOGRAPHIC RENDER: ACTIVE<br>
+                            GESTURE RECOGNITION: ENABLED<br>
+                            SPATIAL MAPPING: COMPLETE<br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Left Controls -->
+            <div class="hud-corner bottom-left">
+                <div class="hud-panel small">
+                    <div class="gesture-indicator" id="gesture-indicator">
+                        <div class="gesture-icon"></div>
+                        <span class="gesture-label">AWAITING INPUT</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Right Info -->
+            <div class="hud-corner bottom-right">
+                <div class="hud-panel small">
+                    <div class="earth-info" id="earth-info">
+                        <span class="info-label">EARTH MODEL</span>
+                        <span class="info-value" id="earth-mode">SINGLE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Crosshair -->
+            <div class="center-crosshair">
+                <div class="crosshair-ring"></div>
+                <div class="crosshair-dot"></div>
+            </div>
+
+            <!-- Scan Lines Effect -->
+            <div class="scan-lines"></div>
+        </div>
+
+        <!-- 3D HUD Container (positioned by JS) -->
+        <div id="hud-3d-container"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/camera.js"></script>
+    <script type="module" src="js/mediapipe.js"></script>
+    <script type="module" src="js/gestures.js"></script>
+    <script type="module" src="js/hud.js"></script>
+    <script type="module" src="js/earth.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

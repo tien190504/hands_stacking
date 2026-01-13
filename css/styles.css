@@ -1,0 +1,476 @@
+/* =====================================================
+   JARVIS AR Interface - Electric Blue Theme
+   ===================================================== */
+
+/* CSS Variables - Electric Blue Palette */
+:root {
+    --primary: #00D4FF;
+    --primary-dark: #0088AA;
+    --primary-darker: #003344;
+    --primary-glow: rgba(0, 212, 255, 0.6);
+    --primary-subtle: rgba(0, 212, 255, 0.1);
+    --background: #000810;
+    --text-primary: #00D4FF;
+    --text-secondary: rgba(0, 212, 255, 0.7);
+    --glass-bg: rgba(0, 20, 40, 0.6);
+    --glass-border: rgba(0, 212, 255, 0.3);
+    --success: #00FF88;
+    --warning: #FFAA00;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Orbitron', 'Segoe UI', system-ui, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+}
+
+/* =====================================================
+   Loading Screen
+   ===================================================== */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-ring {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 30px;
+    border: 3px solid var(--primary-subtle);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 
+        0 0 30px var(--primary-glow),
+        inset 0 0 20px var(--primary-subtle);
+}
+
+.loading-title {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 0.5em;
+    margin-bottom: 10px;
+    text-shadow: 0 0 30px var(--primary-glow);
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.loading-text {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    animation: blink 1.5s ease-in-out infinite;
+}
+
+.loading-bar {
+    width: 300px;
+    height: 4px;
+    background: var(--primary-subtle);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.loading-progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+    box-shadow: 0 0 20px var(--primary-glow);
+    animation: loading 2.5s ease-in-out forwards;
+}
+
+/* =====================================================
+   AR Container
+   ===================================================== */
+#ar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#webcam {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#three-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* =====================================================
+   HUD Overlay
+   ===================================================== */
+#hud-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.hud-corner {
+    position: absolute;
+    pointer-events: auto;
+}
+
+.top-left {
+    top: 20px;
+    left: 20px;
+}
+
+.top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.bottom-left {
+    bottom: 20px;
+    left: 20px;
+}
+
+.bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+
+/* =====================================================
+   HUD Panels - Glassmorphism
+   ===================================================== */
+.hud-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 15px 20px;
+    min-width: 220px;
+    box-shadow: 
+        0 0 30px rgba(0, 212, 255, 0.1),
+        inset 0 0 30px rgba(0, 212, 255, 0.05);
+    animation: panel-glow 3s ease-in-out infinite alternate;
+}
+
+.hud-panel.small {
+    min-width: 150px;
+    padding: 10px 15px;
+}
+
+.panel-header {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+/* Status Items */
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+}
+
+.status-label {
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+}
+
+.status-value {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.status-value.online {
+    color: var(--success);
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+/* Waveform Container */
+.waveform-container {
+    margin-bottom: 12px;
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#waveform-canvas {
+    display: block;
+    width: 100%;
+    height: 60px;
+}
+
+/* Data Scroll */
+.data-scroll {
+    height: 80px;
+    overflow: hidden;
+    position: relative;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        black 20%,
+        black 80%,
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        black 20%,
+        black 80%,
+        transparent 100%
+    );
+}
+
+.scroll-content {
+    animation: scroll-up 8s linear infinite;
+}
+
+/* Gesture Indicator */
+.gesture-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.gesture-icon {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.gesture-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+}
+
+/* Earth Info */
+.earth-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-label {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+}
+
+.info-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+}
+
+/* =====================================================
+   Center Crosshair
+   ===================================================== */
+.center-crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.crosshair-ring {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: crosshair-pulse 2s ease-in-out infinite;
+}
+
+.crosshair-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* =====================================================
+   Scan Lines Effect
+   ===================================================== */
+.scan-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 212, 255, 0.03) 2px,
+        rgba(0, 212, 255, 0.03) 4px
+    );
+    pointer-events: none;
+    animation: scan-move 10s linear infinite;
+}
+
+/* =====================================================
+   3D HUD Container
+   ===================================================== */
+#hud-3d-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+/* =====================================================
+   Animations
+   ===================================================== */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { 
+        text-shadow: 0 0 30px var(--primary-glow);
+        opacity: 1;
+    }
+    50% { 
+        text-shadow: 0 0 60px var(--primary-glow), 0 0 80px var(--primary);
+        opacity: 0.9;
+    }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes loading {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+@keyframes panel-glow {
+    0% { 
+        box-shadow: 
+            0 0 30px rgba(0, 212, 255, 0.1),
+            inset 0 0 30px rgba(0, 212, 255, 0.05);
+    }
+    100% { 
+        box-shadow: 
+            0 0 50px rgba(0, 212, 255, 0.2),
+            inset 0 0 40px rgba(0, 212, 255, 0.08);
+    }
+}
+
+@keyframes scroll-up {
+    0% { transform: translateY(100%); }
+    100% { transform: translateY(-100%); }
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 10px var(--primary-glow);
+    }
+    50% { 
+        transform: scale(1.1);
+        box-shadow: 0 0 20px var(--primary-glow);
+    }
+}
+
+@keyframes crosshair-pulse {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    50% { 
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+@keyframes scan-move {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100vh; }
+}
+
+/* =====================================================
+   Responsive Adjustments
+   ===================================================== */
+@media (max-width: 768px) {
+    .hud-panel {
+        min-width: 180px;
+        padding: 10px 15px;
+    }
+    
+    .loading-title {
+        font-size: 2rem;
+        letter-spacing: 0.3em;
+    }
+    
+    .loading-bar {
+        width: 200px;
+    }
+}
+
+/* Import Orbitron font for sci-fi aesthetic */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap');
